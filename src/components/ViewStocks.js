@@ -3,6 +3,7 @@ import {Table} from 'react-bootstrap';
 
 import { useEffect ,useState}  from 'react';
 import Button from '@restart/ui/esm/Button';
+import { remove } from 'dom-helpers';
 
 
 
@@ -26,15 +27,24 @@ const getstocks = async () =>{
 
     const items = await response.json();
     // console.log(items);
-    setStocks(items);
-      
+    setStocks(items);      
+}
+
+//Remove Stock entry from portfolio liste.
+const deleteStockById = async (delId) => {
+
+    let delUrl = url.concat('/').concat(delId);
+    const response = await fetch(delUrl,
+        {
+            method : 'DELETE',
+        }).then(() => console.log("Delete successful"));
 }
 
 useEffect( () => {
 
     getstocks();
     setLoading(false);
-},[])
+},[stocks])
 
 
 if(loading){
@@ -43,6 +53,9 @@ if(loading){
 
 //Delete Stock from Portfolio
 const onRemoveHandler =(id) =>{
+
+    deleteStockById(id);
+    setLoading(true);
 
 console.log(id);
 
@@ -75,7 +88,7 @@ console.log(id);
                         <td>{stock.buyPrice}</td>
                         <td>{stock.currentPrice}</td>
                         <td>{stock.yield}</td>
-                        <td><Button type="button" className='btn btn-block btn-danger' onChange={()=>onRemoveHandler(stock.stockId)}>X</Button></td>
+                        <td><Button type="button" className='btn btn-block btn-danger' onClick={() => onRemoveHandler(stock.stockId)}>X</Button></td>
                         </tr>
                     
                   )}
